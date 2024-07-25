@@ -1,0 +1,59 @@
+pipeline {
+    agent any 
+    stages {
+        stage('Git Checkout') { 
+            steps { 
+                script { 
+                    git branch: 'master',
+                        credentialsId: 'rajath-my-git-pat',
+                        url: 'https://github.com/rajath-optit/build_js_react_app.git'
+                }
+            } 
+        }
+
+        stage('Build reactJS') {
+            steps {
+                script {
+                    echo "reactjs build"
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo 'Creating Docker image...'
+                    sh "docker build -t bharathoptdocker/reactjs:latest ."
+                }
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                script {
+                    echo 'Logging in to Docker registry...'
+                    sh "docker login -u YOUR_DOCKER_USERNAME -p YOUR_DOCKER_PASSWORD"
+                }
+            }
+        }
+
+        stage('Docker Run') {
+            steps {
+                script {
+                    echo 'Running Docker container...'
+                    sh "docker run -p 8080:80 -d bharathoptdocker/reactjs:latest"
+                }
+            }
+        }
+
+        stage('Docker Publish') {
+            steps {
+                script {
+                    echo 'Publishing Docker image...'
+                    sh "docker push bharathoptdocker/reactjs:latest"
+                }
+            }
+        }
+    }
+}

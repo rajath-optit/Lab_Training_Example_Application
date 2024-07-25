@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: /snap/kompose/19/kompose-linux-amd64 convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: consumer-one
+  name: consumer-one
+  namespace: Kompose_StatefulSet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: consumer-one
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: /snap/kompose/19/kompose-linux-amd64 convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: consumer-one
+    spec:
+      containers:
+      - env:
+        - name: RABBITMQ_HOST
+          value: rabbitmq
+        - name: RABBITMQ_PASSWORD
+          value: guest
+        - name: RABBITMQ_PORT
+          value: "5672"
+        - name: RABBITMQ_USERNAME
+          value: guest
+        image: bharathoptdocker/python-consumer-one:v1.0.0
+        imagePullPolicy: "Always"
+        name: consumer-one
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status: {}

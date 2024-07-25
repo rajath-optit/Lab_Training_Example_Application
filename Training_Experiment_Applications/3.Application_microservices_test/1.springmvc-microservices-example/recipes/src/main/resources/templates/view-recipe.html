@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>View Recipe</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" />
+</head>
+<body>
+
+	<div class="container">
+
+		<div class="jumbotron">
+			<h1>View Recipe</h1>
+		</div>
+		<div class="row">
+			<p class="lead">
+				<a href="/recipes" class="btn btn-primary"><span
+					class="glyphicon glyphicon-arrow-left"></span></a> <a
+					th:href="@{/recipes/edit/{id}(id=${recipe.id})}"
+					class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span></a>
+				<a th:href="@{/recipes/delete/{id}(id=${recipe.id})}"
+					class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
+			</p>
+		</div>
+		<div class="row">
+			<div class="col-sm-3"></div>
+			<div class="col-sm-6">
+				<table class="table">
+					<tr>
+						<td><b>No</b></td>
+						<td th:text="${recipe.id}"></td>
+					</tr>
+					<tr>
+						<td><b>Title</b></td>
+						<td th:text="${recipe.title}"></td>
+					</tr>
+					<tr>
+						<td><b>Ingredients</b></td>
+						<td th:text="${recipe.ingredients}"></td>
+					</tr>
+					<tr>
+						<td><b>Instructions</b></td>
+						<td th:text="${recipe.instructions}"></td>
+					</tr>
+					<tr>
+						<td><b>Cooking Time</b></td>
+						<td th:text="${recipe.cookingTime}"></td>
+					</tr>
+					<tr>
+						<td><b>Difficulty Level</b></td>
+						<td th:text="${recipe.difficultyLevel}"></td>
+					</tr>
+					<tr>
+						<td><b>Average Rating</b></td>
+						<td th:text="${recipe.averageRating}"></td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-sm-3"></div>
+		</div>
+
+	</div>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script th:href="@{/js/bootstrap.js}"></script>
+</body>
+</html>

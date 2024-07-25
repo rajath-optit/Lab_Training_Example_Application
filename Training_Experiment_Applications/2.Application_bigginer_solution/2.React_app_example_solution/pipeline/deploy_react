@@ -1,0 +1,34 @@
+pipeline { 
+    agent any 
+    stages { 
+        stage('Git Checkout') { 
+            steps { 
+                script { 
+                    git branch: branch_or_tag, 
+                        credentialsId: 'rajath-my-git-pat', // Provide your credentials ID
+                        url: 'https://github.com/rajath-optit/build_js_react_app.git' // Provide your Git repository URL
+                }
+            } 
+        }
+    stage('Deploy to Kubernetes') {
+            steps {
+                script { withCredentials([file(credentialsId: 'poc-kube-cluster-cred', variable: 'KUBECONFIG')]) {
+                sh 'mkdir -p $HOME/.kube/ && cat $KUBECONFIG > $HOME/.kube/config'
+                // Deploying the Kubernetes resources to the specified namespace
+                sh 'kubectl apply -f kubernetes/manifest/reactjs_deployment.yaml --namespace=optit-lab-react'
+                echo 'Applying Kubernetes Service...'
+                sh 'kubectl apply -f kubernetes/manifest/reactjs_service.yaml --namespace=optit-lab-react'
+                    }
+                }        
+            }
+        }
+    stage('Cleanup') {
+            steps {
+                script {
+                    echo 'Cleaning up unused Docker images...'
+                    sh 'docker system prune -f'
+                }
+            }
+        }
+    }
+}

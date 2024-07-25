@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app
+  namespace: spring-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-app
+  template:
+    metadata:
+      labels:
+        app: spring-app
+    spec:
+      containers:
+      - name: spring-app
+        image: bharathoptdocker/my_spring_application:version1  # Replace with your Docker image name and tag
+        ports:
+        - containerPort: 7071  # Ensure this matches the port your Spring Boot application is listening on
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:mysql://10.10.30.87:30006/recipes"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "root"
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: mysql-root-password

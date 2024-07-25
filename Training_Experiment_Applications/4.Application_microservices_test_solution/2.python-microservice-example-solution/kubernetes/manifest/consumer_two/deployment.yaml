@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-two-deployment
+  namespace: my-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-two
+  template:
+    metadata:
+      labels:
+        app: consumer-two
+    spec:
+      containers:
+        - name: consumer-two
+          image: bharathoptdocker/python-consumer-two:1
+          ports:
+            - containerPort: 5000

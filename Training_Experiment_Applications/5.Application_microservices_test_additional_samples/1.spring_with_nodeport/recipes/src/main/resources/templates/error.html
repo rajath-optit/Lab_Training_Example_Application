@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Error Page</title>
+
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" />
+
+</head>
+<body>
+	<div class="container">
+		<div class="jumbotron">
+			<h1>Error</h1>
+		</div>
+		<div class="row">
+			<p class="lead col-sm-3">
+				<b>Date</b>
+			</p>
+			<p class="lead col-sm-9" th:text="${timestamp}"></p>
+		</div>
+		<div class="row">
+			<p class="lead col-sm-3">
+				<b>Path</b>
+			</p>
+			<p class="lead col-sm-9" th:text="${path}"></p>
+		</div>
+		<div class="row">
+			<p class="lead col-sm-3">
+				<b>Error Type</b>
+			</p>
+			<p class="lead col-sm-9" th:text="${error}"></p>
+		</div>
+		<div class="row">
+			<p class="lead col-sm-3">
+				<b>Status</b>
+			</p>
+			<p class="lead col-sm-9" th:text="${status}"></p>
+		</div>
+		<div class="row">
+			<p class="lead col-sm-3">
+				<b>Message</b>
+			</p>
+			<p class="lead col-sm-9" th:text="${message}"></p>
+		</div>
+	</div>
+
+
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script th:href="@{/js/bootstrap.js}"></script>
+</body>
+</html>

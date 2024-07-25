@@ -1,0 +1,34 @@
+plugins {
+  id 'org.springframework.boot' version '2.7.18'
+  id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+  id 'java'
+  id 'org.sonarqube' version '4.4.1.3373'
+}
+
+group = 'in.optit'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+description = 'Simple example service for Opt IT Lab.'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+  useJUnitPlatform()
+}
+
+
+sonar {
+  properties {
+    property "sonar.projectKey", "myorganisation2_myproject2"
+    property "sonar.organization", "myorganisation2"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
+}

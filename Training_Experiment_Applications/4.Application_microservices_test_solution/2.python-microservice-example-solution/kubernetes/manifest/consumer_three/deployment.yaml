@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-three-deployment
+  namespace: my-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-three
+  template:
+    metadata:
+      labels:
+        app: consumer-three
+    spec:
+      containers:
+        - name: consumer-three
+          image: bharathoptdocker/python-consumer-three:1
+          ports:
+            - containerPort: 5000

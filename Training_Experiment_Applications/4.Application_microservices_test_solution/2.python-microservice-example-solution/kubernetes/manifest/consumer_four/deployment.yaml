@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-four-deployment
+  namespace: my-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-four
+  template:
+    metadata:
+      labels:
+        app: consumer-four
+    spec:
+      containers:
+        - name: consumer-four
+          image: bharathoptdocker/python-consumer-four:1
+          ports:
+            - containerPort: 5000

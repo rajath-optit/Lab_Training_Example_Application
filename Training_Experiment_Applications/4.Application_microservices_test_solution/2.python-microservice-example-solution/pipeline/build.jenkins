@@ -1,0 +1,67 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    git branch: 'main',
+                    credentialsId: 'bharath',
+                    url: 'https://github.com/optit-cloud-team/optit-lab-python-microservice-example.git'
+                }
+            }
+        }
+
+        stage('Deploy with Docker Compose') {
+            steps {
+                // Ensure Docker Compose is installed
+                sh 'docker-compose --version'
+
+                // Deploy the application using Docker Compose
+                sh 'docker-compose up --build -d'
+                sh 'docker ps'
+            }
+        }
+
+        stage('Tag Docker Images') {
+            steps {
+                sh 'docker tag optit-lab-python-microservice-example-producer:latest bharathoptdocker/python-producer:1'
+                sh 'docker tag optit-lab-python-microservice-example-consumer_one:latest bharathoptdocker/python-consumer-one:1'
+                sh 'docker tag optit-lab-python-microservice-example-consumer_two:latest bharathoptdocker/python-consumer-two:1'
+                sh 'docker tag optit-lab-python-microservice-example-consumer_three:latest bharathoptdocker/python-consumer-three:1'
+                sh 'docker tag optit-lab-python-microservice-example-consumer_four:latest bharathoptdocker/python-consumer-four:1'
+            }
+        }
+
+        stage('Docker Publish') {
+            steps {
+                script {
+                    // Docker login using credentials
+                    withCredentials([usernamePassword(credentialsId: 'bkdockerid', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
+
+                        sh 'docker push bharathoptdocker/python-producer:1'
+                        sh 'docker push bharathoptdocker/python-consumer-one:1'
+                        sh 'docker push bharathoptdocker/python-consumer-two:1'
+                        sh 'docker push bharathoptdocker/python-consumer-three:1'
+                        sh 'docker push bharathoptdocker/python-consumer-four:1'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'poc-kube-cluster-cred-1', variable: 'KUBECONFIG')]) {
+                        // Apply Kubernetes manifests in the specified namespace
+                        sh 'kubectl apply -f kubernetes/manifest/mysql/service.yaml -n my-namespace'
+                        sh 'kubectl apply -f kubernetes/manifest/mysql/mysql-storage.yaml/mysql-pvc.yaml -n my-namespace'
+                        sh 'kubectl apply -f kubernetes/manifest/mysql/mysql-secret.yaml -n my-namespace'
+                        sh 'kubectl apply -f kubernetes/manifest/mysql/deployment.yaml -n my-namespace'
+                    }
+                }
+            }
+        }
+    }
+}

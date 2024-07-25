@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: consumer-four-service
+  namespace: my-namespace
+spec:
+  selector:
+    app: consumer-four
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: ClusterIP

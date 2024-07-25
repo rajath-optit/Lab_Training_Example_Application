@@ -1,0 +1,7 @@
+pika
+flask
+cryptography
+mysql.connector
+mysql.connector.python
+sqlalchemy
+pymysql

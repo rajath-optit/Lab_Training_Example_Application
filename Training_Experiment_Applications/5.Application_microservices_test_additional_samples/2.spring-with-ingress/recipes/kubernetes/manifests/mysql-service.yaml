@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: spring-example
+spec:
+  type: NodePort
+  ports:
+    - port: 3306
+      targetPort: 3306
+      nodePort: 30006  # Choose a port within the range 30000-32767
+  selector:
+    app: mysql

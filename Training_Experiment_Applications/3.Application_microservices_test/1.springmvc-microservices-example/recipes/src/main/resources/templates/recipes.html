@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Recipes</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" />
+</head>
+<body>
+	<div>
+
+		<div class="container">
+
+			<div class="jumbotron">
+				<h1>Recipes</h1>
+			</div>
+
+			<div class="row">
+				<p class="lead">
+					<a href="/recipes/new" class="btn btn-primary">Add Recipe</a>
+				</p>
+
+				<table class="table">
+					<thead class="thead-light">
+						<tr>
+							<td><b>#</b></td>
+							<td><b>Title</b></td>
+							<td><b>Cooking Time</b></td>
+							<td><b>Difficulty Level</b></td>
+							<td><b>Average Rating</b></td>
+							<td><b>View</b></td>
+							<td><b>Edit</b></td>
+							<td><b>Delete</b></td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="recipe : ${recipes}">
+							<td th:text="${recipe.id}"></td>
+							<td th:text="${recipe.title}"></td>
+							<td th:text="${recipe.cookingTime}"></td>
+							<td th:text="${recipe.difficultyLevel}"></td>
+							<td th:text="${recipe.averageRating}"></td>
+							<td><a th:href="@{/recipes/view/{id}(id=${recipe.id})}"><span
+									class="glyphicon glyphicon-eye-open"></span></a></td>
+							<td><a th:href="@{/recipes/edit/{id}(id=${recipe.id})}"><span
+									class="glyphicon glyphicon-edit"></span></a></td>
+							<td><a th:href="@{/recipes/delete/{id}(id=${recipe.id})}"><span
+									class="glyphicon glyphicon-trash"></span></a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+	</div>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script th:href="@{/js/bootstrap.js}"></script>
+</body>
+</html>

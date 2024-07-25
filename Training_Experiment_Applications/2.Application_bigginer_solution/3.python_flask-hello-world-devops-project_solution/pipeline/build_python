@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                script {
+                    git branch: 'test_python',
+                        credentialsId: 'rajath-my-git-pat',
+                        url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git'
+                    echo "Checked out Git repository"
+                }
+            }
+        }
+
+        stage('Build with Python') {
+            steps {
+                script {
+                    // Install dependencies
+                    sh 'pip install flake8 pytest flask'
+
+                    // Build Docker image
+                    sh 'docker build -t bharathoptdocker/python:latest .'
+
+                    // Push Docker image to Docker Hub
+                    sh 'docker push bharathoptdocker/python:latest'
+
+                    // Run the Python script in the background
+                    sh 'nohup python3 ./app.py > /dev/null 2>&1 &'
+                }
+            }
+        }
+
+        stage('Docker Publish Python') {
+            steps {
+                script {
+                    // Docker login using credentials
+                    withCredentials([usernamePassword(credentialsId: 'bkdockerid', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+                        
+                        def buildId = env.BUILD_ID
+                        def imageNameWithTag = "bharathoptdocker/python:$buildId"
+                        sh "docker tag bharathoptdocker/python:latest $imageNameWithTag"
+                        sh "docker push $imageNameWithTag"
+
+                        def imageNameWithLatest = "bharathoptdocker/python:latest"
+                        sh "docker push $imageNameWithLatest"
+                        echo"docker pulling"
+                        sh "docker pull $imageNameWithTag"
+                        echo"docker ps"
+                        sh "docker ps"
+                    }
+                }
+            }
+        }
+    }
+}

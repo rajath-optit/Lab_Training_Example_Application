@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    git branch: 'main',
+                    credentialsId: 'bharath',
+                    url: 'https://github.com/optit-cloud-team/optit-lab-python-microservice-example.git'
+                }
+            }
+        }
+
+        stage('Deploy and Update Deployment') {
+            steps {
+                script {
+                    def manifestsDir = 'kubernetes/manifest'
+
+                    withCredentials([file(credentialsId: 'poc-kube-cluster-cred-1', variable: 'KUBECONFIG')]) {
+                        // Delete deployments
+                        sh "kubectl delete -f ${manifestsDir}/producer/producer-deployment.yaml -n my-namespace"
+                        sh "kubectl delete -f ${manifestsDir}/consumer_one/deployment.yaml -n my-namespace"
+                        sh "kubectl delete -f ${manifestsDir}/consumer_two/deployment.yaml -n my-namespace"
+                        sh "kubectl delete -f ${manifestsDir}/consumer_three/deployment.yaml -n my-namespace"
+                        sh "kubectl delete -f ${manifestsDir}/consumer_four/deployment.yaml -n my-namespace"
+
+                        // Apply deployments
+                        sh "kubectl apply -f ${manifestsDir}/producer/producer-deployment.yaml -n my-namespace"
+                        sh "kubectl apply -f ${manifestsDir}/consumer_one/deployment.yaml -n my-namespace"
+                        sh "kubectl apply -f ${manifestsDir}/consumer_two/deployment.yaml -n my-namespace"
+                        sh "kubectl apply -f ${manifestsDir}/consumer_three/deployment.yaml -n my-namespace"
+                        sh "kubectl apply -f ${manifestsDir}/consumer_four/deployment.yaml -n my-namespace"
+                    }
+                }
+            }
+        }
+
+        stage('Deploy and Update Services') {
+            steps {
+                script {
+                    def manifestsDir = 'kubernetes/manifest'
+
+                    withCredentials([file(credentialsId: 'poc-kube-cluster-cred-1', variable: 'KUBECONFIG')]) {
+                        // Delete services
+                        sh "kubectl delete -f ${manifestsDir}/producer/producer-service.yaml -n my-namespace"
+                        sh "kubectl delete -f ${manifestsDir}/consumer_one/service.yaml -n my-namespace"
+                        sh "kubectl delete -f ${manifestsDir}/consumer_two/service.yaml -n my-namespace"
+                        sh "kubectl delete -f ${manifestsDir}/consumer_three/service.yaml -n my-namespace"
+                        sh "kubectl delete -f ${manifestsDir}/consumer_four/service.yaml -n my-namespace"
+
+                        // Apply services
+                        sh "kubectl apply -f ${manifestsDir}/producer/producer-service.yaml -n my-namespace"
+                        sh "kubectl apply -f ${manifestsDir}/consumer_one/service.yaml -n my-namespace"
+                        sh "kubectl apply -f ${manifestsDir}/consumer_two/service.yaml -n my-namespace"
+                        sh "kubectl apply -f ${manifestsDir}/consumer_three/service.yaml -n my-namespace"
+                        sh "kubectl apply -f ${manifestsDir}/consumer_four/service.yaml -n my-namespace"
+                    }
+                }
+            }
+        }
+    }
+}

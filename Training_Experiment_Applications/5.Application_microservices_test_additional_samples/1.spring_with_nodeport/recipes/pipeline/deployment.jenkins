@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    git branch: 'main',
+                    credentialsId: 'bharath',
+                    url: 'https://github.com/optit-cloud-team/optit-lab-springmvc-example.git'
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'poc-kube-cluster-cred-1', variable: 'KUBECONFIG')]) {
+
+                        // Deploy Spring Boot
+                        sh "kubectl apply -f recipes/kubernetes/manifests/springboot-deployment.yaml -n spring-example"
+                        sh "kubectl apply -f recipes/kubernetes/manifests/springboot-service.yaml -n spring-example"
+                        sh "kubectl apply -f recipes/kubernetes/manifests/kubectl apply -f ingress.yaml -spring-example"
+                    }
+                }
+            }
+        }
+
+        stage('Verify Kubernetes Deployment') {
+            steps {
+                script {
+                    sh "kubectl get all -n spring-example"
+                }
+            }
+        }
+    }
+}

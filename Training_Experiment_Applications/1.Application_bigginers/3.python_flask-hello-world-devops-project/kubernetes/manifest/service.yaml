@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: optit-lab-python-service
+  namespace: optit-lab-python
+spec:
+  selector:
+    app: optit-lab-python-service
+  ports:
+    - protocol: TCP
+      port: 8585
+      targetPort: 8585
+  

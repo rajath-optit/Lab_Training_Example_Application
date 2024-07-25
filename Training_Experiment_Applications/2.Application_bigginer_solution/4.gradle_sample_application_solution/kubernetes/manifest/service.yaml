@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: optit-lab
+  name: optit-lab-service
+  labels:
+    app: optit-lab-service
+spec:
+  selector:
+    app: optit-lab-service
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080

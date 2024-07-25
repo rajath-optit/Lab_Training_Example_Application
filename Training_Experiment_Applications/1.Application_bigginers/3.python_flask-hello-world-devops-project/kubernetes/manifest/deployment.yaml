@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  optit-lab-python-service
+  namespace: optit-lab-python
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app:  optit-lab-python-service
+  template:
+    metadata:
+      labels:
+        app:  optit-lab-python-service
+    spec:
+      containers:
+      - name:  optit-lab-python-service
+        image: bharathoptdocker/python:latest
+        ports:
+        - containerPort: 8585
+          name: http
+        resources:
+          limits:
+            cpu: 200m  # Adjust the CPU limit based on your needs
+            memory: 256Mi  # Adjust the memory limit based on your needs
+          requests:
+            cpu: 100m  # Adjust the CPU request based on your needs
+            memory: 128Mi  # Adjust the memory request based on your needs

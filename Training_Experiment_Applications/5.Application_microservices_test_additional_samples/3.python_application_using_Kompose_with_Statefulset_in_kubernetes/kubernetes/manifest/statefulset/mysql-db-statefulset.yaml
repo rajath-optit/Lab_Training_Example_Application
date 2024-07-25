@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    kompose.cmd: /snap/kompose/19/kompose-linux-amd64 convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mysql-db
+  name: mysql-db
+  namespace: Kompose_StatefulSet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mysql-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: /snap/kompose/19/kompose-linux-amd64 convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: mysql-db
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_DATABASE
+          value: ims
+        - name: MYSQL_ROOT_PASSWORD
+          value: pesuims
+        image: mysql:8.0
+        imagePullPolicy: ""
+        name: mysql-db
+        ports:
+        - containerPort: 3306
+        resources: {}
+        securityContext:
+          capabilities:
+            add:
+            - SYS_NICE
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: db
+        - mountPath: /docker-entrypoint-initdb.d/init.sql
+          name: mysql-db-claim1
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: db
+        persistentVolumeClaim:
+          claimName: db
+      - name: mysql-db-claim1
+        persistentVolumeClaim:
+          claimName: mysql-db-claim1
+status: {}

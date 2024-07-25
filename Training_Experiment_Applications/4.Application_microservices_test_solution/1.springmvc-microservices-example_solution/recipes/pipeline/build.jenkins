@@ -1,0 +1,93 @@
+pipeline {
+    agent any
+
+    environment {
+        MAVEN_HOME = '/opt/apache-maven-3.6.3'
+        PATH = "${MAVEN_HOME}/bin:${env.PATH}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    git branch: 'main',
+                        credentialsId: 'bharath',
+                        url: 'https://github.com/optit-cloud-team/optit-lab-springmvc-example.git'
+                }
+            }
+        }
+
+        stage('Deploy the MySQL service in Kubernetes') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'poc-kube-cluster-cred-1', variable: 'KUBECONFIG')]) {
+                        // Deploy MySQL Secret
+                        sh "kubectl apply -f recipes/kubernetes/manifests/mysql-secret.yaml"
+
+                        // Deploy other resources as needed
+                        sh "kubectl apply -f recipes/kubernetes/manifests/mysql-storage/mysql-pv.yaml"
+                        sh "kubectl apply -f recipes/kubernetes/manifests/mysql-storage/mysql-pvc.yaml"
+                        sh "kubectl apply -f recipes/kubernetes/manifests/mysql-deployment.yaml -n spring-example"
+                        sh "kubectl apply -f recipes/kubernetes/manifests/mysql-service.yaml -n spring-example"
+                    }
+                }
+            }
+        }
+
+        stage('Maven Build') {
+            steps {
+                script {
+                    // Navigate to the directory, Clean and build the Maven project
+                    sh "pwd && cd recipes && mvn clean install"
+                }
+            }
+        }
+
+        stage('Verify Dockerfile') {
+            steps {
+                script {
+                    // Print working directory and list files to verify Dockerfile presence
+                    sh 'pwd && ls -la recipes'
+                }
+            }
+        }
+        
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    // Navigate to the directory containing Dockerfiles
+                    dir('recipes') {
+                        // Build Docker images using Dockerfile
+                        sh "docker build -f Dockerfile -t bharathoptdocker/my_spring_application:latest ."
+                        
+                        // List Docker images
+                        sh 'docker images'
+                    }
+                }
+            }
+        }
+
+        stage('Docker Publish') {
+            steps {
+                script {
+                    // Docker login using credentials
+                    withCredentials([usernamePassword(credentialsId: 'bkdockerid', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
+                        
+                        // Push Docker image to Docker Hub
+                        sh 'docker push bharathoptdocker/my_spring_application:latest'
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}

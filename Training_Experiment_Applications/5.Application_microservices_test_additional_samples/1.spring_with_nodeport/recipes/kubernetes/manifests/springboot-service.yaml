@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-app-service
+  namespace: spring-example
+spec:
+  type: NodePort  # Changed to NodePort to expose outside the cluster
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080  # Optional: specify a port in the range 30000-32767
+  selector:
+    app: spring-app

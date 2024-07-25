@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: optit-lab
+  name: optit-lab-service
+  labels:
+    app: optit-lab-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: optit-lab-service
+  template:
+    metadata:
+      labels:
+        app: optit-lab-service
+    spec:
+      containers:
+      - name: optit-lab-service
+        image: bharathoptdocker/optit-lab-service:latest
+        ports:
+        - containerPort: 8080
+          name: http
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi

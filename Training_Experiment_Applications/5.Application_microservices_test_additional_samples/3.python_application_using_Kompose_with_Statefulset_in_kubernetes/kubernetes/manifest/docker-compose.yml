@@ -1,0 +1,105 @@
+version: "3.7"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    expose:
+      - "5672"
+      - "15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  mysql_db:
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      - MYSQL_DATABASE=ims
+      - MYSQL_ROOT_PASSWORD=pesuims
+    ports:
+      - '3406:3306'
+    volumes:
+      - db:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  producer:
+    build:
+      context: .
+      dockerfile: producer/Dockerfile
+    depends_on:
+      - rabbitmq
+      - consumer_one
+      - consumer_two
+      - consumer_three
+      - consumer_four
+    restart: always
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+    ports:
+      - "5000:5000"
+    expose:
+      - "5000"
+
+  consumer_one:
+    build:
+      context: .
+      dockerfile: consumer_one/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+
+  consumer_two:
+    build:
+      context: .
+      dockerfile: consumer_two/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+      
+  consumer_three:
+    build:
+      context: .
+      dockerfile: consumer_three/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+         
+  consumer_four:
+    build:
+      context: .
+      dockerfile: consumer_four/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+
+volumes:
+  db:
+    driver: local
