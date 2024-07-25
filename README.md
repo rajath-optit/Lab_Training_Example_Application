@@ -24,36 +24,43 @@ For example:
 ----------------------------example------------------------------
 ## Frequently Asked Questions (FAQ)
 example:
+
 [tag:question and suggestion]
 [-user1:] getting error in [link of repo] with setting persistant volume [date:jul/24]
 -
 
 
+
+
 [-admin:] check persistant volume documentation available in readme, it provides complete detail and step nessesary
 [date:jul/24]
 -
-------------------------------------------------------------------
+_________________________________________________________________________________________________________________________
+-
 
 
-
+--------------------------------------------------------XXXXXXXX---------------------------------------------------------
 ## Frequently Asked Questions (FAQ)
 use example steps.
+_________________________________________________________________________________________________________________________
 -
 
 
-
+--------------------------------------------------------XXXXXXXX---------------------------------------------------------
 ### How to report issues?
 use example steps.
+_________________________________________________________________________________________________________________________
 -
 
 
-
+--------------------------------------------------------XXXXXXXX---------------------------------------------------------
 ### Suggestions and Feedback
 use example steps.
+_________________________________________________________________________________________________________________________
 -
 
 
-
+--------------------------------------------------------XXXXXXXX---------------------------------------------------------
 
 
 Users of the lab can leave suggestions or request changes by opening a new issue in the [Issues tab](https://github.com/rajath-optit/devops-projects/issues). The admin will review the suggestions and reply. If necessary, the suggested changes will be implemented.
